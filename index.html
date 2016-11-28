@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tic Tac Toe</title>
+    <script type="text/javascript" src="js/phaser.min.js"></script>
+    <script type="text/javascript" src="js/functions.js"></script>
+      <style type="text/css">
+          body {
+              margin: 0;
+          }
+      </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+      var marks;
+      var player = 0;
+      var winText;
+      var matrix = new Array(2);
+      for (var i = 0; i < 3; i++) {
+        matrix[i] = new Array(2);
+      }
+
+      function preload(){
+        game.load.image('sky', 'assets/sky.png');
+        game.load.spritesheet('xoAnim', 'assets/xoAnim.png',128,132);
+        game.load.image('board', 'assets/board.png');
+      }
+
+      function create(){
+        game.add.sprite(0, 0, 'sky');
+        game.add.sprite(0, 0, 'board');
+
+        marks = game.add.group();
+
+        function markItDown(mark,pointer){
+          var playerMarked = player;
+          if(player == 0){
+              mark.frame = 1;
+              player = 1;
+          }else{
+              mark.frame = 2;
+              player = 0;
+          }
+          mark.inputEnabled = false;
+          mark.input.useHandCursor = false;
+
+          for(var i = 0; i < 3;i++){
+              var xPosition = matrix[i].indexOf(mark);
+              if (xPosition != -1){
+                if(playerMarked == 0){
+                    matrix[i][xPosition] = 0;
+                }else{
+                    matrix[i][xPosition] = 1;
+                }
+              }
+          }
+          if(checkWinner(playerMarked) == true){
+              for (var i = 0; i < marks.children.length; i++) {
+                marks.children[i].inputEnabled = false;
+                marks.children[i].input.useHandCursor = false;
+              }
+              winText = game.add.text(625, 16, 'Player '+(playerMarked+1)+' win!', { fontSize: '32px', fill: '#000'});
+          }
+
+        }
+
+        matrix[0][0] = marks.create(25,25, 'xoAnim');
+        matrix[0][1] = marks.create(255, 25, 'xoAnim');
+        matrix[0][2] = marks.create(480, 25, 'xoAnim');
+        matrix[1][0] = marks.create(25, 255, 'xoAnim');
+        matrix[1][1] = marks.create(255, 255, 'xoAnim');
+        matrix[1][2] = marks.create(480, 255, 'xoAnim');
+        matrix[2][0] = marks.create(25, 465, 'xoAnim');
+        matrix[2][1] = marks.create(255, 465, 'xoAnim');
+        matrix[2][2] = marks.create(480, 465, 'xoAnim');
+
+        for (var i = 0; i < marks.children.length; i++) {
+          marks.children[i].frame = 0;
+          marks.children[i].inputEnabled = true;
+          marks.children[i].input.useHandCursor = true;
+          marks.children[i].events.onInputDown.add(markItDown, this);
+        }
+
+
+      }
+
+
+
+      function update(){
+
+      }
+    </script>
+  </body>
+</html>
